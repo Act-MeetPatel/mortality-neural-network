@@ -29,3 +29,10 @@ GROUP BY e.attained_age, p.smoker_status
 grouped <- dbGetQuery(con, query)
 head(grouped)
 colSums(grouped[, c("exposure", "deaths")])
+
+# ---- Save grouped data for later steps ----
+dir.create("data", showWarnings = FALSE)
+write.csv(grouped, "data/grouped_exposure_deaths.csv", row.names = FALSE)
+
+# ---- Close the connection ----
+dbDisconnect(con)
