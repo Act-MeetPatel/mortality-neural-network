@@ -15,3 +15,11 @@
 | Group by attained age and smoker status | `GROUP BY` | Poisson loss only needs totals per group | 316,390 rows became 168 |
 | Save grouped data as CSV | `write.csv(...)` | Later steps run without the database | Totals re-checked after reading it back |
 | Work in scripts, not the Console | `r/01_load_data.R` | Reproducible and pushable to GitHub | Rule for the rest of the project |
+| Split by policy, not by grouped rows | `sample(policies$policy_id)` | Every set sees all ages, so the test is honest | Splitting the 168 grouped rows would have hidden whole ages from training |
+| Split sizes 70/15/15 | `train_share`, `valid_share` | Standard split: learn, tune, final exam | Set as variables, so they can change |
+| Seed 3130 | `set.seed(3130)` | Same split every run | Matches the pricing project |
+| Temporary table for split labels | `dbWriteTable(..., temporary = TRUE)` | Joins the labels in SQL without changing the pricing database | Table disappears on disconnect |
+| GLM form: age + smoker, Poisson, log link, exposure offset | `glm(deaths ~ attained_age + smoker_status + offset(log(exposure)), ...)` | Standard actuarial benchmark, same loss as the network | Age enters as a straight term only |
+| Fit on train only | `data = train` | Valid and test stay unseen | n/a |
+| Compare models by Poisson deviance on the same rows | `poisson_deviance()` | Fair comparison. Deviance differs by set size, so only same-row comparisons count | Train deviance matched `summary()` |
+| Plot train only, drop zero-death groups | `subset(train, deaths > 0)` | Test stays sealed, and zeros can't show on a log axis | 39 of 167 groups dropped |
