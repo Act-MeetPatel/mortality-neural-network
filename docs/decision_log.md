@@ -80,3 +80,9 @@
 | Do not retune the network after finding the level error | n/a | Rule 3 from Step 6: no changes after seeing the test result | Reported as a finding and a limitation |
 | Plot rates and ratio to truth, dot size = exposure | `p_rates`, `p_ratio` | Shows where errors are and whether they carry weight | Errors sit at ages with little exposure |
 | Save level check and band table | `outputs/level_check.csv`, `outputs/band_table.csv` | Numbers in the write-up are reproducible from files | Console checks moved into the script |
+| Record package versions | `r/09_session_info.R`, `docs/session_info.txt` | Step 7 flagged versions as missing, and reproducibility needs them | Only the four loaded packages are listed in the README. The rest are in `sessionInfo()` |
+| Check reproducibility from a restarted R session | `source("r/01_load_data.R")`, `source("r/06_test_evaluation.R")` | A project that only works in the session that built it is not finished | Same scores. Another computer not tested |
+| Compare the rebuilt CSV with the committed one | `git status --short data` | If the split changed, every later number would change | Printed nothing, as reported |
+| README states the result as a tie | `README.md` | Honest headline, and the tie rule is labelled as a judgment | The data is synthetic, so the README says so |
+| Ignore generated HTML in `docs/` only | `docs/*.html` in `.gitignore` | Stops `decision_log.html` appearing in the Git tab | A broad `docs/` rule hid the whole folder in Step 0, so this one is narrow |
+| Leave the LinkedIn post for later | n/a | Chosen by you | A draft exists in the chat, and is not in the repository |
