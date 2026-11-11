@@ -60,3 +60,12 @@
 | Plot both curves on the test set | `p_test`, age grid 20 to 105 | See where the models differ | For understanding only, nothing changed afterwards |
 | Drop zero-death groups from the plot | `subset(test_df, deaths > 0)` | Zeros cannot show on a log axis | 62 of 165 dropped |
 | Leave the young-age question to Step 8 | n/a | Test dots are too noisy there, and the true curve is known | Network above GLM below about age 45, cause not established |
+| Use torch for R, not Python | `install.packages("torch")` | Stays in RStudio, no Python setup | Same engine as PyTorch |
+| Double-precision tensors | `to_t()` with `torch_float64()` | Match R's numbers, so we can compare exactly | Default is single precision |
+| Same start, same rate, same rounds as Step 4 | `start <- init_params(3130)`, 0.005, 5,000 | Only the tool changes, so any difference is a bug | Matched to about 1e-12 |
+| Parameters track slopes | `requires_grad = TRUE` | Autograd needs to know what to differentiate | Data tensors do not |
+| Replace zero deaths by 1 inside the log only | `y_safe <- torch_clamp(y, min = 1)` | Avoids log(0) giving NaN | Loss unchanged, those terms are multiplied by y = 0 |
+| Loss constant as a double tensor | `scale <- to_t(2 / X$shape[1])` | Multiplying by a plain number turned the loss into single precision | Found by checking `$dtype` after each step. Cause of the default not tested |
+| Use torch's optimizer | `optim_sgd(..., lr = 0.005)` | Same rule as ours: new = old - rate x slope | `zero_grad()` needed each round |
+| Validation measured without recording | `with_no_grad({...})` | Valid is only measured, never learned from | Same principle as Step 4 |
+| Do not rerun tuning in torch | n/a | Would give the same answers | Final network stays the hand-built one |
