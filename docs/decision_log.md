@@ -30,3 +30,16 @@
 | Slope formula 2 x (predicted - actual) | `grad_z <- 2 * (mu - y)` | The slope of Poisson deviance with an exp output | Given without proof, derived in Step 4 |
 | Learning rate 0.01 | `learning_rate <- 0.01` | Big enough to learn, small enough not to overshoot on this group | Setting, will be tuned |
 | Train on one group first | `row <- subset(...)` | Simplest way to see the learning loop | Memorizes noise, so real training uses all groups |
+| 1 hidden layer, 8 neurons | `n_hidden <- 8` | Simplest backpropagation, enough for 2 inputs, 33 parameters | Not compared with other sizes yet |
+| tanh in the hidden layer | `tanh(Z1)` | Smooth squish should give smooth curves, slope is 1 - tanh^2 | My reasoning, not tested. ReLU is the main alternative |
+| exp() on the output | `rate <- exp(z2)` | Keeps rates positive, same log link as the GLM | n/a |
+| Inputs as matrices | `make_inputs()` | All groups processed at once, no loop | X is 167 x 2 for train |
+| Random starting weights, sd 0.5 | `rnorm(..., sd = init_sd)` | Identical weights would make every neuron learn the same thing | `init_sd` is a setting |
+| Hidden biases start at 0 | `b1 <- rep(0, n_hidden)` | Random weights already make the neurons differ | n/a |
+| Output bias starts at log of the overall rate | `b2 <- log(sum(y) / sum(exposure))` | First guess is near the average rate, not 100% | Random weights still pushed the start to 3,249 vs 4,558 deaths |
+| Same seed | `set.seed(3130)` | Same weights every run | Matches the rest of the project |
+| Slopes divided by number of groups | `/ n` in `backward()` | Learning rate no longer depends on set size | Same as using mean deviance |
+| Check slopes numerically | `check_gradients()`, eps 1e-5 | A wrong slope would silently ruin training | All 33 agreed to about 1e-9 |
+| Full-batch gradient descent | `for (epoch in ...)` | Only 167 groups, so no need for mini-batches | n/a |
+| Learning rate 0.005, 5,000 rounds | `learning_rate`, `n_epochs` | First try, safe and slow | Loss still falling at the end. To be tuned in Step 5 |
+| Valid loss recorded, never used for updates | `valid_loss` in `history` | Keeps valid an honest check | Test set still sealed |
