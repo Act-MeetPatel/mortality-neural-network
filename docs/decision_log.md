@@ -23,3 +23,10 @@
 | Fit on train only | `data = train` | Valid and test stay unseen | n/a |
 | Compare models by Poisson deviance on the same rows | `poisson_deviance()` | Fair comparison. Deviance differs by set size, so only same-row comparisons count | Train deviance matched `summary()` |
 | Plot train only, drop zero-death groups | `subset(train, deaths > 0)` | Test stays sealed, and zeros can't show on a log axis | 39 of 167 groups dropped |
+| Scale age by dividing by 100 | `age_scale <- 100`, `x <- c(age / age_scale, smoker)` | Keeps inputs near 0 to 1, so training stays stable | Setting, can be changed |
+| Output neuron uses exp() | `rate <- exp(z)` | Keeps rates positive, same log link as the GLM | One neuron is then a Poisson GLM |
+| Predicted deaths = rate x exposure | `mu <- rate * row$exposure` | Poisson offset idea | n/a |
+| Start with made-up weights | `w <- c(2.0, 1.5)`, `b <- -3.0` | Only to show the arithmetic | Real networks start from small random numbers |
+| Slope formula 2 x (predicted - actual) | `grad_z <- 2 * (mu - y)` | The slope of Poisson deviance with an exp output | Given without proof, derived in Step 4 |
+| Learning rate 0.01 | `learning_rate <- 0.01` | Big enough to learn, small enough not to overshoot on this group | Setting, will be tuned |
+| Train on one group first | `row <- subset(...)` | Simplest way to see the learning loop | Memorizes noise, so real training uses all groups |
