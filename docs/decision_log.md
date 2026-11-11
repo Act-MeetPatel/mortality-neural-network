@@ -43,3 +43,12 @@
 | Full-batch gradient descent | `for (epoch in ...)` | Only 167 groups, so no need for mini-batches | n/a |
 | Learning rate 0.005, 5,000 rounds | `learning_rate`, `n_epochs` | First try, safe and slow | Loss still falling at the end. To be tuned in Step 5 |
 | Valid loss recorded, never used for updates | `valid_loss` in `history` | Keeps valid an honest check | Test set still sealed |
+| Early stopping on validation loss | `train_network()`, patience 20 checks | Stops before the network memorizes noise | Keeps the weights from the best round, not the last |
+| Check validation every 100 rounds | `eval_every = 100` | Cheap enough, fine enough to see the trend | Setting |
+| Compare 5 learning rates | `rates <- c(0.002, ..., 0.05)` | Find the safe range | 0.02 and 0.05 diverged, 0.01 slow |
+| Lock learning rate 0.005 | `final_rate <- 0.005` | Tied with 0.002 on valid (gap within noise), reached its best round faster | Chosen using valid loss, so slightly optimistic |
+| Check stability with 5 seeds | `seeds <- c(3130, 1, 2, 3, 4)` | Test whether the gain depends on the starting weights | 4 of 5 finished and agreed within 0.002 |
+| Report seed 3 as unfinished | `seed3_long`, cap 150,000 | Still improving after 150,000 rounds | Not chased further. Cause unknown |
+| Final model is seed 3130 | `run1$best$params` | The seed used throughout the project | Valid 0.8522, train 0.9149 |
+| Save the final weights | `saveRDS(..., "outputs/final_weights.rds")` | Step 6 loads the exact network instead of retraining | Reloaded valid loss matched exactly |
+| Test set kept sealed | n/a | It stays the one honest final check | Not touched in Step 5 |
