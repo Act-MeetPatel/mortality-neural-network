@@ -69,3 +69,14 @@
 | Use torch's optimizer | `optim_sgd(..., lr = 0.005)` | Same rule as ours: new = old - rate x slope | `zero_grad()` needed each round |
 | Validation measured without recording | `with_no_grad({...})` | Valid is only measured, never learned from | Same principle as Step 4 |
 | Do not rerun tuning in torch | n/a | Would give the same answers | Final network stays the hand-built one |
+| Compare against the true formula, not just noisy data | `true_qx()` | The test set is too noisy to show where the models differ | Uses no test data |
+| Read the pricing code for the exact formula and its call | `02_simulate_deaths_exposure.R` | Smoker effect and probability conversion could not be guessed | Called with attained age. Lines above 45 not read |
+| Copy `true_qx()` with `ifelse` | `ifelse(smoker == "Smoker", ...)` | Handles a column of ages at once | Parameters stay adjustable |
+| Error measure: Poisson deviance of model expected deaths against true expected deaths | `dev_true()` | Same loss family as training, and the truth has no noise | Lower is closer |
+| Weight by train exposure, only groups with exposure | `merge(grid, w)` | Weights errors by where policyholders are, and avoids ages with no data | A different weighting could change band winners |
+| Five age bands | `cut(..., c(19, 39, 59, 79, 99, 105))` | See where each model is better | Setting. The 100-105 band has only 676 exposure years |
+| Calibration = model deaths / true deaths | `glm_calib`, `net_calib` | Shows over or under prediction by band | 1.00 is exact |
+| Check total deaths against the truth on the valid exposure | `level_check` | Uses exposure only, so no random death counts | Network +2.2%, GLM -0.35% |
+| Do not retune the network after finding the level error | n/a | Rule 3 from Step 6: no changes after seeing the test result | Reported as a finding and a limitation |
+| Plot rates and ratio to truth, dot size = exposure | `p_rates`, `p_ratio` | Shows where errors are and whether they carry weight | Errors sit at ages with little exposure |
+| Save level check and band table | `outputs/level_check.csv`, `outputs/band_table.csv` | Numbers in the write-up are reproducible from files | Console checks moved into the script |
