@@ -52,3 +52,11 @@
 | Final model is seed 3130 | `run1$best$params` | The seed used throughout the project | Valid 0.8522, train 0.9149 |
 | Save the final weights | `saveRDS(..., "outputs/final_weights.rds")` | Step 6 loads the exact network instead of retraining | Reloaded valid loss matched exactly |
 | Test set kept sealed | n/a | It stays the one honest final check | Not touched in Step 5 |
+| Dry run before the test exam | `score_glm()` and `score_net()` on train and valid | Proves the pipeline reproduces known numbers, so a bug cannot waste the one honest exam | All four matched |
+| Rules fixed before looking at test | Written in the Step 6 notes | Stops the result from bending the conclusion | Includes: never retune after seeing test |
+| Tie threshold 0.01 per group | Part B rule | Step 5 settings moved valid by 0.01 to 0.02, so smaller gaps cannot count as a win | My judgment, not a statistical test |
+| Score both models once, same rows, same loss | `test_results` | Fair comparison | Test: GLM 0.8479, network 0.8484 |
+| Report the tie as it came out | n/a | Network did not beat the GLM on held-out data | Advantage shrank from -0.058 (train) to -0.011 (valid) to +0.0004 (test) |
+| Plot both curves on the test set | `p_test`, age grid 20 to 105 | See where the models differ | For understanding only, nothing changed afterwards |
+| Drop zero-death groups from the plot | `subset(test_df, deaths > 0)` | Zeros cannot show on a log axis | 62 of 165 dropped |
+| Leave the young-age question to Step 8 | n/a | Test dots are too noisy there, and the true curve is known | Network above GLM below about age 45, cause not established |
